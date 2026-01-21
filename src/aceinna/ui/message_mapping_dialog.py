@@ -1,106 +1,1 @@
-from PySide6.QtWidgets import (QDialog, QVBoxLayout, QFormLayout, QComboBox, 
-                               QSpinBox, QDialogButtonBox, QLabel, QWidget)
-from ..models.data_source import MessageMapping
-from ..core.dbc_manager import DBCManager
-from .field_list_widget import FieldListWidget
-
-class MessageMappingDialog(QDialog):
-    def __init__(self, parent=None, encoding_mapping: MessageMapping = None, dbc_path: str = ""):
-        super().__init__(parent)
-        self.setWindowTitle("Message Mapping")
-        self.mapping = encoding_mapping
-        self.dbc_path = dbc_path
-        self.db = None
-        
-        layout = QVBoxLayout()
-        form = QFormLayout()
-        
-        # ID selector: Combo (if DBC) or SpinBox
-        self.id_combo = QComboBox()
-        # self.id_spin = QSpinBox()
-        # self.id_spin.setRange(0, 0x1FFFFFFF) # Full 29 bit range
-        
-        form.addRow("Message ID/PGN:", self.id_combo)
-        # form.addRow("Manual ID:", self.id_spin)
-        
-        layout.addLayout(form)
-        
-        # Field List
-        self.field_widget = FieldListWidget(dbc_path=dbc_path) # Pass DBC path for field selection
-        layout.addWidget(QLabel("Fields:"))
-        layout.addWidget(self.field_widget)
-        
-        buttons = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
-        buttons.accepted.connect(self.accept)
-        buttons.rejected.connect(self.reject)
-        layout.addWidget(buttons)
-        
-        self.setLayout(layout)
-        
-        # Load DBC
-        self._populate_dbc()
-        
-        if self.mapping:
-            # Set ID
-            cid = self.mapping.identifier
-            # Match PGN if we have it
-            # The combo has full IDs or PGNs depending on DBC.
-            # We need to find the item that matches.
-            
-            found = False
-            for i in range(self.id_combo.count()):
-                 data = self.id_combo.itemData(i)
-                 if data == -1 or data is None: continue
-                 
-                 fid = int(data)
-                 pgn = fid
-                 if fid > 0x1FFFF:
-                     pgn = (fid >> 8) & 0x1FFFF
-                     
-                 if pgn == cid or fid == cid:
-                     self.id_combo.setCurrentIndex(i)
-                     # Manually set the message ID on field widget since signal is connected later/or to ensure it runs
-                     self.field_widget.set_current_message_id(fid) 
-                     found = True
-                     break
-            
-            # self.id_spin.setValue(self.mapping.identifier)
-            self.field_widget.set_fields(self.mapping.fields)
-            
-        self.id_combo.currentIndexChanged.connect(self.on_combo_changed)
-
-    def _populate_dbc(self):
-        if not self.dbc_path:
-            self.id_combo.setEnabled(False)
-            return
-            
-        try:
-            self.db = DBCManager.load_dbc(self.dbc_path)
-            if self.db:
-                self.id_combo.addItem("Select from DBC...", -1)
-                for msg in self.db.messages:
-                    self.id_combo.addItem(f"{msg.name} (0x{msg.frame_id:X})", msg.frame_id)
-        except:
-            self.id_combo.setEnabled(False)
-
-    def on_combo_changed(self):
-        data = self.id_combo.currentData()
-        if data and data != -1:
-            frame_id = int(data)
-            # Try to handle J1939 PGN vs Full ID
-            # If > 0x1FFFF, likely a full frame ID, extract PGN
-            if frame_id > 0x1FFFF:
-                 frame_id = (frame_id >> 8) & 0x1FFFF
-            
-            # self.id_spin.setValue(frame_id)
-            self.field_widget.set_current_message_id(int(data)) # Use original ID to find signals in DBC
-
-    def get_mapping(self) -> MessageMapping:
-        data = self.id_combo.currentData()
-        frame_id = int(data) if data else 0
-        if frame_id > 0x1FFFF:
-             frame_id = (frame_id >> 8) & 0x1FFFF
-             
-        m = MessageMapping(identifier=frame_id)
-        m.fields = self.field_widget.get_fields()
-        return m
+from PySide6.QtWidgets import (QDialog, QVBoxLayout, QFormLayout, QComboBox,                                QDialogButtonBox, QLabel, QWidget, QListWidget, QListWidgetItem)from PySide6.QtCore import Qttry:    from ..models.data_source import MessageMapping, FieldSettingexcept ImportError:    # Handle circular import if necessary or fix path    from ..models.data_source import MessageMapping, FieldSetting    from ..core.dbc_manager import DBCManagerclass MessageMappingDialog(QDialog):    def __init__(self, parent=None, encoding_mapping: MessageMapping = None, dbc_path: str = "", excluded_ids: list = None):        super().__init__(parent)        self.setWindowTitle("Message Mapping")        self.mapping = encoding_mapping        self.dbc_path = dbc_path        self.excluded_ids = excluded_ids or []        self.db = None        self.current_msg_obj = None                layout = QVBoxLayout()        form = QFormLayout()                # ID selector: Combo        self.id_combo = QComboBox()                form.addRow("Message ID/PGN:", self.id_combo)                layout.addLayout(form)                # Checkbox List for Signals        layout.addWidget(QLabel("Signals (Check to include):"))        self.signal_list = QListWidget()        layout.addWidget(self.signal_list)                buttons = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)        buttons.accepted.connect(self.accept)        buttons.rejected.connect(self.reject)        layout.addWidget(buttons)                self.setLayout(layout)                # Load DBC        self._populate_dbc()                if self.mapping:            # Set ID            cid = self.mapping.identifier            # Match PGN if we have it                        found = False            for i in range(self.id_combo.count()):                 data = self.id_combo.itemData(i)                 if data == -1 or data is None: continue                                  fid = int(data)                 pgn = fid                 if fid > 0x1FFFF:                     pgn = (fid >> 8) & 0x1FFFF                                      if pgn == cid or fid == cid:                     self.id_combo.setCurrentIndex(i)                     found = True                     break                        # The on_combo_changed trigger will populate the list.             # We then need to check the boxes that correspond to current mapping.fields            self.on_combo_changed()            self._check_mapped_fields()                    self.id_combo.currentIndexChanged.connect(self.on_combo_changed)    def _populate_dbc(self):        if not self.dbc_path:            self.id_combo.setEnabled(False)            return                    try:            self.db = DBCManager.load_dbc(self.dbc_path)            if self.db:                self.id_combo.addItem("Select from DBC...", -1)                for msg in self.db.messages:                    # Check exclusions                    # Assuming excluded_ids are what is stored in mapping.identifier                    # If stored is PGN:                    pgn = msg.frame_id                    if pgn > 0x1FFFF:                        pgn = (pgn >> 8) & 0x1FFFF                                        # If we are editing, we shouldn't exclude our own ID                    is_current = False                    if self.mapping:                        if self.mapping.identifier == pgn or self.mapping.identifier == msg.frame_id:                            is_current = True                                        if not is_current and (msg.frame_id in self.excluded_ids or pgn in self.excluded_ids):                         continue                                             self.id_combo.addItem(f"{msg.name} (0x{msg.frame_id:X})", msg.frame_id)        except:            self.id_combo.setEnabled(False)    def on_combo_changed(self):        self.signal_list.clear()        self.current_msg_obj = None                data = self.id_combo.currentData()        if not data or data == -1:            return        frame_id = int(data)                if self.db:            try:                msg = self.db.get_message_by_frame_id(frame_id)                self.current_msg_obj = msg                if msg:                    for sig in msg.signals:                        item = QListWidgetItem(sig.name)                        item.setFlags(item.flags() | Qt.ItemIsUserCheckable)                        item.setCheckState(Qt.Unchecked)                        item.setData(Qt.UserRole, sig) # Store signal object                        self.signal_list.addItem(item)            except:                pass    def _check_mapped_fields(self):        if not self.mapping: return                # Create a set of mapped field names for quick lookup        mapped_names = {f.name for f in self.mapping.fields}                for i in range(self.signal_list.count()):            item = self.signal_list.item(i)            if item.text() in mapped_names:                item.setCheckState(Qt.Checked)    def get_mapping(self) -> MessageMapping:        data = self.id_combo.currentData()        frame_id = int(data) if data else 0                # Logic to determine if we store full ID or PGN        # Just use PGN logic if extended? Or keep consistency with previous code        final_id = frame_id        if frame_id > 0x1FFFF:             final_id = (frame_id >> 8) & 0x1FFFF                     fields = []        for i in range(self.signal_list.count()):            item = self.signal_list.item(i)            if item.checkState() == Qt.Checked:                sig = item.data(Qt.UserRole)                if sig:                    # Convert cantools Signal to FieldSetting                    # value_type determination                    val_type = 'unsigned'                    if sig.is_float:                        val_type = 'double' if sig.length > 32 else 'float'                    elif sig.is_signed:                        val_type = 'signed'                                        fs = FieldSetting(                        name=sig.name,                        start_bit=sig.start,                        length=sig.length,                        byte_order=sig.byte_order,                        value_type=val_type,                        factor=sig.scale,                        offset=sig.offset,                        unit=sig.unit or ""                    )                    fields.append(fs)                return MessageMapping(identifier=final_id, fields=fields)        if frame_id > 0x1FFFF:             frame_id = (frame_id >> 8) & 0x1FFFF                     m = MessageMapping(identifier=frame_id)        m.fields = self.field_widget.get_fields()        return m

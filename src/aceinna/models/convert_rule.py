@@ -33,6 +33,7 @@ class DataListField:
 
 @dataclass
 class DataListRule(ConvertRule):
+    title: str = ""
     fields: List[DataListField] = field(default_factory=list)
     delimiter: str = ","
     include_header: bool = True

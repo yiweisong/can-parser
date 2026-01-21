@@ -8,6 +8,181 @@
                 "dbc_file_path": "/Users/songyiwei/projects/can-data-parser/IMU400RI.dbc",
                 "pgn_mappings": [
                     {
+                        "identifier": 61482,
+                        "fields": [
+                            {
+                                "name": "Aceinna_Pitch_Angular_Rate",
+                                "start_bit": 0,
+                                "length": 16,
+                                "byte_order": "little_endian",
+                                "value_type": "unsigned",
+                                "factor": 0.0078125,
+                                "offset": -250,
+                                "unit": "deg/s"
+                            },
+                            {
+                                "name": "Aceinna_Roll_Angular_Rate",
+                                "start_bit": 16,
+                                "length": 16,
+                                "byte_order": "little_endian",
+                                "value_type": "unsigned",
+                                "factor": 0.0078125,
+                                "offset": -250,
+                                "unit": "deg/s"
+                            },
+                            {
+                                "name": "Aceinna_Yaw_Angular_Rate",
+                                "start_bit": 32,
+                                "length": 16,
+                                "byte_order": "little_endian",
+                                "value_type": "unsigned",
+                                "factor": 0.0078125,
+                                "offset": -250,
+                                "unit": "deg/s"
+                            }
+                        ]
+                    },
+                    {
+                        "identifier": 61459,
+                        "fields": [
+                            {
+                                "name": "Aceinna_Pitch_SSI",
+                                "start_bit": 0,
+                                "length": 16,
+                                "byte_order": "little_endian",
+                                "value_type": "unsigned",
+                                "factor": 0.002,
+                                "offset": -64,
+                                "unit": "deg"
+                            },
+                            {
+                                "name": "Aceinna_Roll_SSI",
+                                "start_bit": 16,
+                                "length": 16,
+                                "byte_order": "little_endian",
+                                "value_type": "unsigned",
+                                "factor": 0.002,
+                                "offset": -64,
+                                "unit": "deg"
+                            },
+                            {
+                                "name": "Aceinna_GyroY_SSI",
+                                "start_bit": 32,
+                                "length": 16,
+                                "byte_order": "little_endian",
+                                "value_type": "unsigned",
+                                "factor": 0.002,
+                                "offset": -64,
+                                "unit": "deg/s"
+                            }
+                        ]
+                    },
+                    {
+                        "identifier": 65387,
+                        "fields": [
+                            {
+                                "name": "Aceinna_Pitch_HR",
+                                "start_bit": 0,
+                                "length": 19,
+                                "byte_order": "little_endian",
+                                "value_type": "unsigned",
+                                "factor": 0.0009765625,
+                                "offset": -250,
+                                "unit": "deg/s"
+                            },
+                            {
+                                "name": "Aceinna_Roll_HR",
+                                "start_bit": 19,
+                                "length": 19,
+                                "byte_order": "little_endian",
+                                "value_type": "unsigned",
+                                "factor": 0.0009765625,
+                                "offset": -250,
+                                "unit": "deg/s"
+                            },
+                            {
+                                "name": "Aceinna_Yaw_HR",
+                                "start_bit": 38,
+                                "length": 19,
+                                "byte_order": "little_endian",
+                                "value_type": "unsigned",
+                                "factor": 0.0009765625,
+                                "offset": -250,
+                                "unit": "deg/s"
+                            }
+                        ]
+                    },
+                    {
+                        "identifier": 61485,
+                        "fields": [
+                            {
+                                "name": "Aceinna_AccY",
+                                "start_bit": 0,
+                                "length": 16,
+                                "byte_order": "little_endian",
+                                "value_type": "unsigned",
+                                "factor": 0.01,
+                                "offset": -320,
+                                "unit": "m/s2"
+                            },
+                            {
+                                "name": "Aceinna_AccX",
+                                "start_bit": 16,
+                                "length": 16,
+                                "byte_order": "little_endian",
+                                "value_type": "unsigned",
+                                "factor": 0.01,
+                                "offset": -320,
+                                "unit": "m/s2"
+                            },
+                            {
+                                "name": "Aceinna_AccZ",
+                                "start_bit": 32,
+                                "length": 16,
+                                "byte_order": "little_endian",
+                                "value_type": "unsigned",
+                                "factor": 0.01,
+                                "offset": -320,
+                                "unit": "m/s2"
+                            }
+                        ]
+                    },
+                    {
+                        "identifier": 65389,
+                        "fields": [
+                            {
+                                "name": "Aceinna_AccY_HR",
+                                "start_bit": 0,
+                                "length": 19,
+                                "byte_order": "little_endian",
+                                "value_type": "unsigned",
+                                "factor": 0.00125,
+                                "offset": -320,
+                                "unit": "m/s2"
+                            },
+                            {
+                                "name": "Aceinna_AccX_HR",
+                                "start_bit": 19,
+                                "length": 19,
+                                "byte_order": "little_endian",
+                                "value_type": "unsigned",
+                                "factor": 0.00125,
+                                "offset": -320,
+                                "unit": "m/s2"
+                            },
+                            {
+                                "name": "Aceinna_AccZ_HR",
+                                "start_bit": 38,
+                                "length": 19,
+                                "byte_order": "little_endian",
+                                "value_type": "unsigned",
+                                "factor": 0.00125,
+                                "offset": -320,
+                                "unit": "m/s2"
+                            }
+                        ]
+                    },
+                    {
                         "identifier": 61481,
                         "fields": [
                             {
@@ -16,8 +191,8 @@
                                 "length": 24,
                                 "byte_order": "little_endian",
                                 "value_type": "unsigned",
-                                "factor": 3.1e-05,
-                                "offset": -250.0,
+                                "factor": 3.0517578125e-05,
+                                "offset": -250,
                                 "unit": "deg"
                             },
                             {
@@ -26,22 +201,186 @@
                                 "length": 24,
                                 "byte_order": "little_endian",
                                 "value_type": "unsigned",
-                                "factor": 3.1e-05,
-                                "offset": -250.0,
+                                "factor": 3.0517578125e-05,
+                                "offset": -250,
                                 "unit": "deg"
                             }
                         ]
                     }
                 ],
-                "source_address_filters": [
-                    129,
-                    131
-                ]
+                "source_address_filters": []
             },
             "convert_rules": [
                 {
                     "type": "plot",
-                    "title": "Aceinna_Angles_SSI2",
+                    "title": "Angular",
+                    "x_axis": null,
+                    "y_axes": [
+                        {
+                            "binding": "Aceinna_Pitch_Angular_Rate"
+                        },
+                        {
+                            "binding": "Aceinna_Roll_Angular_Rate"
+                        },
+                        {
+                            "binding": "Aceinna_Yaw_Angular_Rate"
+                        }
+                    ],
+                    "figure_figsize": [
+                        6.4,
+                        4.8
+                    ],
+                    "figure_dpi": 99,
+                    "grid_linestyle": "--",
+                    "grid_alpha": 0.5,
+                    "tick_labelsize": 8,
+                    "legend_label": "legend1",
+                    "legend_loc": "best",
+                    "legend_fontsize": 8
+                },
+                {
+                    "type": "data_list",
+                    "title": "Combined",
+                    "fields": [
+                        {
+                            "binding": "Aceinna_Yaw_Angular_Rate"
+                        },
+                        {
+                            "binding": "Aceinna_Roll_Angular_Rate"
+                        },
+                        {
+                            "binding": "Aceinna_Pitch_Angular_Rate"
+                        },
+                        {
+                            "binding": "Aceinna_AccY"
+                        },
+                        {
+                            "binding": "Aceinna_AccZ"
+                        },
+                        {
+                            "binding": "Aceinna_AccX"
+                        },
+                        {
+                            "binding": "Aceinna_Pitch"
+                        },
+                        {
+                            "binding": "Aceinna_Roll"
+                        }
+                    ],
+                    "delimiter": ",",
+                    "include_header": true
+                },
+                {
+                    "type": "plot",
+                    "title": "SSI",
+                    "x_axis": null,
+                    "y_axes": [
+                        {
+                            "binding": "Aceinna_Roll_SSI"
+                        },
+                        {
+                            "binding": "Aceinna_GyroY_SSI"
+                        },
+                        {
+                            "binding": "Aceinna_Pitch_SSI"
+                        }
+                    ],
+                    "figure_figsize": [
+                        6.4,
+                        4.8
+                    ],
+                    "figure_dpi": 99,
+                    "grid_linestyle": "--",
+                    "grid_alpha": 0.5,
+                    "tick_labelsize": 8,
+                    "legend_label": "legend1",
+                    "legend_loc": "best",
+                    "legend_fontsize": 8
+                },
+                {
+                    "type": "plot",
+                    "title": "Angle_HR",
+                    "x_axis": null,
+                    "y_axes": [
+                        {
+                            "binding": "Aceinna_Yaw_HR"
+                        },
+                        {
+                            "binding": "Aceinna_Roll_HR"
+                        },
+                        {
+                            "binding": "Aceinna_Pitch_HR"
+                        }
+                    ],
+                    "figure_figsize": [
+                        6.4,
+                        4.8
+                    ],
+                    "figure_dpi": 99,
+                    "grid_linestyle": "--",
+                    "grid_alpha": 0.5,
+                    "tick_labelsize": 8,
+                    "legend_label": "legend1",
+                    "legend_loc": "best",
+                    "legend_fontsize": 8
+                },
+                {
+                    "type": "plot",
+                    "title": "Accel",
+                    "x_axis": null,
+                    "y_axes": [
+                        {
+                            "binding": "Aceinna_AccX"
+                        },
+                        {
+                            "binding": "Aceinna_AccZ"
+                        },
+                        {
+                            "binding": "Aceinna_AccY"
+                        }
+                    ],
+                    "figure_figsize": [
+                        6.4,
+                        4.8
+                    ],
+                    "figure_dpi": 99,
+                    "grid_linestyle": "--",
+                    "grid_alpha": 0.5,
+                    "tick_labelsize": 8,
+                    "legend_label": "legend1",
+                    "legend_loc": "best",
+                    "legend_fontsize": 8
+                },
+                {
+                    "type": "plot",
+                    "title": "Accel_HR",
+                    "x_axis": null,
+                    "y_axes": [
+                        {
+                            "binding": "Aceinna_AccX_HR"
+                        },
+                        {
+                            "binding": "Aceinna_AccY_HR"
+                        },
+                        {
+                            "binding": "Aceinna_AccZ_HR"
+                        }
+                    ],
+                    "figure_figsize": [
+                        6.4,
+                        4.8
+                    ],
+                    "figure_dpi": 99,
+                    "grid_linestyle": "--",
+                    "grid_alpha": 0.5,
+                    "tick_labelsize": 8,
+                    "legend_label": "legend1",
+                    "legend_loc": "best",
+                    "legend_fontsize": 8
+                },
+                {
+                    "type": "plot",
+                    "title": "SSI2",
                     "x_axis": null,
                     "y_axes": [
                         {
@@ -62,19 +401,6 @@
                     "legend_label": "legend1",
                     "legend_loc": "best",
                     "legend_fontsize": 8
-                },
-                {
-                    "type": "data_list",
-                    "fields": [
-                        {
-                            "binding": "Aceinna_Roll"
-                        },
-                        {
-                            "binding": "Aceinna_Pitch"
-                        }
-                    ],
-                    "delimiter": ",",
-                    "include_header": true
                 }
             ],
             "result_folder": "/Users/songyiwei/projects/can-data-parser/data"

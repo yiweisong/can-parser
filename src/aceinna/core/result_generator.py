@@ -63,6 +63,7 @@ class ResultGenerator:
 
         plt.figure(figsize=rule.figure_figsize, dpi=rule.figure_dpi)
         
+        legend_labels = []
         # X Axis
         x_data = None
         if rule.x_axis and rule.x_axis.binding in results:
@@ -80,7 +81,7 @@ class ResultGenerator:
                 # If X is provided (e.g. another signal), we scatter or plot signal vs signal.
                 
                 label = y_axis.binding
-                
+                legend_labels.append(label)
                 if x_data is not None:
                     # Align based on timestamp? 
                     # If x_data is another signal, it has its own timestamps.
@@ -107,13 +108,13 @@ class ResultGenerator:
         plt.title(rule.title)
         plt.grid(linestyle=rule.grid_linestyle, alpha=rule.grid_alpha)
         plt.tick_params(labelsize=rule.tick_labelsize)
-        # if hasattr(rule, 'legend_label'): 
-        #      # The design says "legendStyle: label, loc, fontsize"
-        #      # The label "legend1" seems to be the default text? 
-        #      # Usually legend uses the plot labels.
-        #      plt.legend('legend', loc=rule.legend_loc, fontsize=rule.legend_fontsize)
-        # else:
-        #      plt.legend()
+        if hasattr(rule, 'legend_label'): 
+            # The design says "legendStyle: label, loc, fontsize"
+            # The label "legend1" seems to be the default text? 
+            # Usually legend uses the plot labels.
+            plt.legend(legend_labels, loc=rule.legend_loc, fontsize=rule.legend_fontsize)
+        else:
+            plt.legend()
              
         filename = f"plot_{index}_{rule.title.replace(' ', '_')}{suffix}.png"
         plt.savefig(os.path.join(folder, filename))
@@ -141,11 +142,17 @@ class ResultGenerator:
         # Sort by timestamp (index)
         df.sort_index(inplace=True)
         
+        # Fill the line with previous values (Forward Fill) to align asynchronous data
+        df.ffill(inplace=True)
+
         # Add index as timestamp column?
         df.reset_index(inplace=True)
         df.rename(columns={'index': 'Timestamp'}, inplace=True)
         
-        filename = f"datalist_{index}{suffix}.csv"
+        # Use rule.title if available, else standard fallback
+        safe_title = rule.title.replace(' ', '_') if getattr(rule, 'title', '') else f"datalist_{index}"
+        
+        filename = f"{safe_title}{suffix}.csv"
         df.to_csv(
             os.path.join(folder, filename), 
             sep=rule.delimiter, 

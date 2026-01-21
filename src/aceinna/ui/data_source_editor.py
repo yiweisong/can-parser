@@ -107,12 +107,50 @@ class DataSourceEditor(QWidget):
                 source_address_filters=sas
             )
 
-    def get_available_signals(self) -> list[str]:
-        # Return a list of all defined field names
-        signals = []
+    def get_available_signals(self) -> dict:
+        # Return signals grouped by message
+        # Format: { "Message Name (ID)": ["Signal1", "Signal2"] }
+        grouped = {}
+        
+        # We need DBC to look up names, tricky if not loaded.
+        # But wait, MappingListWidget already does lookup in refresh_list?
+        # Let's try to do it right here using DBCManager
+        
+        db = None
+        path = self.dbc_path_edit.text()
+        if path:
+            try:
+                from ..core.dbc_manager import DBCManager
+                db = DBCManager.load_dbc(path)
+            except:
+                pass
+        
         mappings = self.mapping_widget.get_mappings()
+        
         for m in mappings:
+            group_name = f"ID/PGN: {m.identifier}"
+            if db:
+                 try:
+                    msg = db.get_message_by_frame_id(m.identifier)
+                    if msg: 
+                        group_name = f"{msg.name} ({m.identifier})"
+                    else:
+                        # Fallback search
+                        for x in db.messages:
+                             # Check J1939 PGN match
+                             pgn = (x.frame_id >> 8) & 0x1FFFF
+                             if pgn == m.identifier:
+                                 group_name = f"{x.name} ({m.identifier})"
+                                 break
+                 except:
+                     pass
+            
+            sig_list = []
             for f in m.fields:
                 if f.name:
-                    signals.append(f.name)
-        return sorted(list(set(signals)))
+                    sig_list.append(f.name)
+            
+            if sig_list:
+                grouped[group_name] = sig_list
+                
+        return grouped
