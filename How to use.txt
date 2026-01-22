@@ -1,4 +1,0 @@
-1. 解压缩 CANDataParser-Windows.zip
-2. 打开CANDataParser.exe
-3. 选择数据文件，demo文件sample.csv
-4. 点击Start，等待结果生成
